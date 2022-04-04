@@ -54,5 +54,29 @@ public class ControladorRegistreLoginUsuaris {
     }
 
 
+    @PostMapping("/usuaris")
+    public ResponseEntity<?> nouUsuari(@RequestBody Usuari nouUsuari) {
+        try {
+            Usuari res = serveiUsuaris.crearNouUsuari(nouUsuari);
+            UsuariConsultaDTO usu = new UsuariConsultaDTO(res.getUsername(), res.getAvatar(), res.getRol());
+            return new ResponseEntity<UsuariConsultaDTO>(usu, HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException ex) {
+            //per si intentem afegir 2 usuaris amb el mateix username, saltarà excepció
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/usuaris")
+    public ResponseEntity<?> llistarUsuarisDTO() {
+        List<Usuari> res = serveiUsuaris.llistarUsuaris();
+        List<UsuariConsultaDTO> aux = new ArrayList();
+        for (Usuari usu : res) {
+            aux.add(new UsuariConsultaDTO(usu.getUsername(), usu.getAvatar(), usu.getRol()));
+        }
+        if (res.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else return ResponseEntity.ok(aux);
+    }
+
 
 }

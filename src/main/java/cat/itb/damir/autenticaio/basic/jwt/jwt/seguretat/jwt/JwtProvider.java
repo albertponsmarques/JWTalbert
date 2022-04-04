@@ -31,7 +31,7 @@ public class JwtProvider {
 
     public String generateToken(Authentication authentication) {
         Usuari user = (Usuari) authentication.getPrincipal();
-        Date tokenExpirationDate = new Date(System.currentTimeMillis() + (jwtDuracionTokenEnSegundos * 1000));
+        Date tokenExpirationDate = new Date(System.currentTimeMillis() + (jwtDuracionTokenEnSegundos * 1000L));
         return Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(jwtSecreto.getBytes()), SignatureAlgorithm.HS512)
                 .setHeaderParam("typ", TOKEN_TYPE)
